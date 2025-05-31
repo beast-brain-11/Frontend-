@@ -53,8 +53,8 @@ const Billing: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1C2E] p-8">
-      <h1 className="text-3xl font-bold text-white mb-8">Billing & Credits</h1>
+    <div className="min-h-screen bg-[#1A1C2E] text-slate-200 p-4 md:p-8"> {/* Added default text color and responsive padding */}
+      <h1 className="text-2xl md:text-3xl font-bold text-white mb-8">Billing & Credits</h1> {/* Responsive title size */}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Credits Card & Purchase Section */}
@@ -79,17 +79,17 @@ const Billing: React.FC = () => {
               {creditPackages.map((pkg, index) => (
                 <button
                   key={index}
-                  className={`p-4 rounded-lg border-2 transition-all ${
+                  className={`p-3 sm:p-4 rounded-lg border-2 transition-all text-center ${ /* Added responsive padding and text-center */
                     selectedPackage === index
                       ? 'border-violet-500 bg-violet-500/10'
                       : 'border-slate-700 hover:border-violet-500/50'
                   }`}
                   onClick={() => setSelectedPackage(index)}
                 >
-                  <div className="text-2xl font-bold text-white mb-1">
+                  <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-1"> {/* Further responsive font size */}
                     {pkg.credits} Credits
                   </div>
-                  <div className="text-lg text-[#7FFFD4]">${pkg.price}</div>
+                  <div className="text-xs sm:text-sm md:text-base lg:text-lg text-[#7FFFD4]">${pkg.price}</div> {/* Further responsive font size */}
                   {pkg.label && (
                     <div className="text-xs text-violet-400 mt-2">{pkg.label}</div>
                   )}
@@ -135,10 +135,9 @@ const Billing: React.FC = () => {
             </button>
           </div>
         </div>
-
-        <div className="bg-[#242842] rounded-xl overflow-hidden">
-          <table className="w-full">
-            <thead>
+        {/* Wrap table in a div for horizontal scrolling on small screens */}
+        <div className="bg-[#242842] rounded-xl overflow-x-auto">
+          <table className="w-full min-w-[600px] md:min-w-full">{/* Ensure table has a min-width to force scroll, or remove md:min-w-full if w-full is enough */}<thead>
               <tr className="border-b border-slate-700/50">
                 <th className="text-left py-4 px-6 text-sm font-medium text-slate-400">Date</th>
                 <th className="text-left py-4 px-6 text-sm font-medium text-slate-400">Description</th>
@@ -147,8 +146,7 @@ const Billing: React.FC = () => {
                 <th className="text-left py-4 px-6 text-sm font-medium text-slate-400">Status</th>
                 <th className="text-right py-4 px-6 text-sm font-medium text-slate-400">Receipt</th>
               </tr>
-            </thead>
-            <tbody>
+            </thead><tbody>
               {transactions.map(transaction => (
                 <tr key={transaction.id} className="border-b border-slate-700/50 last:border-0">
                   <td className="py-4 px-6 text-slate-300">
@@ -175,8 +173,7 @@ const Billing: React.FC = () => {
                   </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
+            </tbody></table>
         </div>
       </div>
     </div>

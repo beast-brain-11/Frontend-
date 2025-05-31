@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Video, Play, CheckCircle, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, Video, Play, CheckCircle, ArrowUpRight, Menu as MenuIcon, X as XIcon } from 'lucide-react'; // Added MenuIcon, XIcon
 import AuthModal from '../components/AuthModal';
 
 const LandingPage = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'signin' | 'signup'>('signin');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu
   const navigate = useNavigate();
 
   const handleOpenAuthModal = (tab: 'signin' | 'signup') => {
+    setIsMobileMenuOpen(false); // Close mobile menu if opening auth modal
     setAuthModalTab(tab);
     setIsAuthModalOpen(true);
   };
@@ -20,36 +22,69 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-violet-950">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-violet-950 text-slate-200"> {/* Added default text color */}
       {/* Navigation */}
-      <nav className="fixed w-full z-40 bg-transparent py-4">
+      <nav className="fixed w-full z-40 bg-slate-900/50 backdrop-blur-md py-4 border-b border-slate-800/50"> {/* Added background and border for better visibility */}
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex justify-between items-center">
-            <div className="flex items-center">
+            <Link to="/" className="flex items-center"> {/* Made logo a Link */}
               <Video className="h-8 w-8 mr-2 text-violet-400" />
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-300">
                 AdCreatorAI
               </span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#demo" className="text-slate-300 hover:text-white transition-colors">Demo</a>
-              <a href="#why-choose-us" className="text-slate-300 hover:text-white transition-colors">Why Choose Us</a>
-              <a href="#contact" className="text-slate-300 hover:text-white transition-colors">Contact Us</a>
+            </Link>
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center space-x-6"> {/* Reduced space-x-8 to space-x-6 */}
+              <a href="#demo" className="text-slate-300 hover:text-violet-300 transition-colors">Demo</a>
+              <a href="#why-choose-us" className="text-slate-300 hover:text-violet-300 transition-colors">Why Choose Us</a>
+              <a href="#contact" className="text-slate-300 hover:text-violet-300 transition-colors">Contact Us</a>
               <button
                 onClick={() => handleOpenAuthModal('signin')}
-                className="text-slate-300 hover:text-white transition-colors"
+                className="text-slate-300 hover:text-violet-300 transition-colors"
               >
                 Sign In
               </button>
               <button
                 onClick={() => handleOpenAuthModal('signup')}
-                className="px-4 py-2 bg-[#6A5ACD] hover:bg-[#5A4ABD] rounded-lg text-white transition-colors"
+                className="px-5 py-2.5 bg-violet-600 hover:bg-violet-700 rounded-lg text-white font-medium transition-colors" // Adjusted padding & color
+              >
+                Get Started
+              </button>
+            </div>
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-slate-300 hover:text-white focus:outline-none"
+                aria-label="Toggle menu"
+              >
+                {isMobileMenuOpen ? <XIcon className="h-7 w-7" /> : <MenuIcon className="h-7 w-7" />}
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* Mobile Menu Overlay/Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-slate-900/95 backdrop-blur-sm shadow-xl border-t border-slate-800/50">
+            <div className="flex flex-col items-center space-y-4 px-4 py-8">
+              <a href="#demo" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-lg hover:text-violet-300 transition-colors w-full text-center">Demo</a>
+              <a href="#why-choose-us" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-lg hover:text-violet-300 transition-colors w-full text-center">Why Choose Us</a>
+              <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-lg hover:text-violet-300 transition-colors w-full text-center">Contact Us</a>
+              <button
+                onClick={() => { handleOpenAuthModal('signin'); setIsMobileMenuOpen(false); }}
+                className="block py-2 text-lg hover:text-violet-300 transition-colors w-full text-center"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => { handleOpenAuthModal('signup'); setIsMobileMenuOpen(false); }}
+                className="mt-2 px-6 py-3 bg-violet-600 hover:bg-violet-700 rounded-lg text-white font-medium transition-colors w-full text-center text-lg"
               >
                 Get Started
               </button>
             </div>
           </div>
-        </div>
+        )}
       </nav>
 
       {/* Auth Modal */}

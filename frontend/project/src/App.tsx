@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Menu as MenuIcon } from 'lucide-react'; // Import Menu icon
 import Sidebar from './components/Sidebar';
 import NotificationCenter from './components/NotificationCenter';
 import LandingPage from './pages/LandingPage';
@@ -13,22 +14,55 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Protected Route wrapper component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  
+  const { isAuthenticated, user } = useAuth(); // Get user for Sidebar
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
+  const toggleMobileSidebar = () => {
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  };
+
+  // Use dummy user from AuthContext or default if null
+  const displayName = user?.name || "User";
+  const credits = 25; // Placeholder, ideally from user context or API
+
   return (
     <div className="flex min-h-screen bg-[#1A1C2E]">
-      <Sidebar credits={25} userName="John Doe" />
-      <div className="flex-1 ml-60">
-        {/* Global Header with Notification Center */}
-        <div className="bg-[#242842] border-b border-slate-700/50 p-4 flex justify-end">
+      {/* Pass isOpen and toggle function to Sidebar */}
+      <Sidebar 
+        credits={credits} 
+        userName={displayName} 
+        isOpen={isMobileSidebarOpen} 
+        onClose={toggleMobileSidebar} 
+      />
+      
+      {/* Main content area */}
+      <div className={`flex-1 transition-all duration-300 ease-in-out ${isMobileSidebarOpen ? 'md:ml-60' : 'md:ml-60'}`}>
+        {/* Global Header */}
+        <div className="bg-[#242842] border-b border-slate-700/50 p-4 flex items-center justify-between md:justify-end">
+          {/* Hamburger Menu Button - visible on mobile */}
+          <button 
+            onClick={toggleMobileSidebar} 
+            className="md:hidden text-slate-300 hover:text-white"
+            aria-label="Open sidebar"
+          >
+            <MenuIcon className="h-6 w-6" />
+          </button>
           <NotificationCenter />
         </div>
         {children}
       </div>
+      {/* Optional: Overlay for mobile sidebar */}
+      {isMobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/30 z-40 md:hidden" 
+          onClick={toggleMobileSidebar}
+          aria-hidden="true"
+        ></div>
+      )}
     </div>
   );
 };
@@ -36,7 +70,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />

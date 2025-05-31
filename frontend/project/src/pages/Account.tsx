@@ -259,12 +259,12 @@ const Account: React.FC = () => {
       </section>
 
       <section>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2 mb-6"> {/* Responsive header for this section */}
           <h3 className="text-lg font-semibold text-white">Recent Transactions</h3>
-          <button className="text-violet-400 hover:text-violet-300">View All</button>
+          <button className="text-sm text-violet-400 hover:text-violet-300">View All Transactions</button> {/* Slightly more descriptive button */}
         </div>
-        <div className="bg-[#3A3F64] rounded-lg overflow-hidden">
-          <table className="w-full">
+        <div className="bg-[#3A3F64] rounded-lg overflow-x-auto"> {/* Added overflow-x-auto */}
+          <table className="w-full min-w-[500px] sm:min-w-full"> {/* Added min-width for scroll, responsive min-width */}
             <thead>
               <tr className="border-b border-slate-700">
                 <th className="text-left py-4 px-6 text-sm font-medium text-slate-400">Date</th>
@@ -378,22 +378,22 @@ const Account: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1C2E] p-8">
-      <h1 className="text-3xl font-bold text-white mb-8">Account Settings</h1>
+    <div className="min-h-screen bg-[#1A1C2E] text-slate-200 p-4 md:p-8"> {/* Responsive padding and default text color */}
+      <h1 className="text-2xl md:text-3xl font-bold text-white mb-8">Account Settings</h1> {/* Responsive title */}
       
-      <div className="flex space-x-2 mb-8 border-b border-slate-700/50">
+      <div className="flex space-x-1 sm:space-x-2 mb-8 border-b border-slate-700/50 overflow-x-auto pb-px"> {/* Scrollable tabs, pb-px for border visibility */}
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center px-6 py-3 text-sm font-medium transition-colors ${
+            className={`flex-shrink-0 flex items-center px-3 sm:px-4 md:px-6 py-3 text-sm font-medium transition-colors whitespace-nowrap ${ /* flex-shrink-0, responsive padding, whitespace-nowrap */
               activeTab === tab.id
                 ? 'text-violet-400 border-b-2 border-violet-400'
                 : 'text-slate-400 hover:text-slate-300'
             }`}
           >
             {tab.icon}
-            <span className="ml-2">{tab.label}</span>
+            <span className="ml-2 hidden sm:inline">{tab.label}</span> {/* Hide label on xs screens */}
           </button>
         ))}
       </div>

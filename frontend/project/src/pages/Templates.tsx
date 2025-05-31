@@ -150,7 +150,7 @@ const Templates: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-8 flex gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row gap-4"> {/* Stack buttons on small screens */}
               <button
                 onClick={() => handleCopyPrompt(JSON.stringify(template.scenes, null, 2))}
                 className="px-6 py-3 bg-violet-600 hover:bg-violet-700 rounded-lg text-white font-medium transition-colors flex items-center"
@@ -170,9 +170,9 @@ const Templates: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#1A1C2E] p-8">
+    <div className="min-h-screen bg-[#1A1C2E] text-slate-200 p-4 md:p-8"> {/* Added default text color and responsive padding */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Examples & Templates</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Examples & Templates</h1> {/* Responsive title size */}
         <p className="text-slate-400">Discover what's possible and get a head start on your next amazing video ad.</p>
       </div>
 
@@ -237,7 +237,7 @@ const Templates: React.FC = () => {
                 alt={template.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300"> {/* Always visible on mobile, hover on desktop */}
                 <Play className="h-8 w-8 text-white" />
               </div>
             </div>

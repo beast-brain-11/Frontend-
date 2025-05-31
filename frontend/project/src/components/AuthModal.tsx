@@ -65,15 +65,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTab = 'si
     <>
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" /* Lower z-index for backdrop */
         onClick={onClose}
+        aria-hidden="true"
       />
       
-      {/* Modal */}
-      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
-        <div className="bg-[#242842] rounded-xl shadow-2xl border border-slate-700/50">
+      {/* Modal container - centered with padding from screen edges */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        {/* Actual Modal visual card */}
+        <div className="bg-[#242842] rounded-xl shadow-2xl border border-slate-700/50 w-full max-w-md max-h-[90vh] overflow-y-auto flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700/50 flex-shrink-0"> {/* Responsive padding, flex-shrink-0 */}
             <div className="flex space-x-4">
               <button
                 onClick={() => setActiveTab('signin')}
@@ -106,15 +108,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTab = 'si
 
           {/* Form */}
           {error && (
-            <div className="mx-6 mt-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+            <div className="mx-4 sm:mx-6 mt-4 sm:mt-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex-shrink-0"> {/* Responsive margin */}
               {error}
             </div>
           )}
 
-          {activeTab === 'signin' ? (
-            <form onSubmit={handleSignIn} className="p-6 space-y-4">
-              <div>
-                <label htmlFor="signin-email" className="block text-sm font-medium text-slate-300 mb-2">
+          {/* Scrollable form content if needed, though max-h on parent helps */}
+          <div className="overflow-y-auto"> 
+            {activeTab === 'signin' ? (
+              <form onSubmit={handleSignIn} className="p-4 sm:p-6 space-y-4"> {/* Responsive padding */}
+                <div>
+                  <label htmlFor="signin-email" className="block text-sm font-medium text-slate-300 mb-2">
                   Email Address
                 </label>
                 <div className="relative">
@@ -169,17 +173,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTab = 'si
                 </button>
               </div>
 
-              <button
-                type="submit"
-                className="w-full py-2 px-4 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-colors"
-              >
-                Sign In
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleSignUp} className="p-6 space-y-4">
-              <div>
-                <label htmlFor="signup-name" className="block text-sm font-medium text-slate-300 mb-2">
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-colors" /* Adjusted padding for consistency */
+                >
+                  Sign In
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleSignUp} className="p-4 sm:p-6 space-y-4"> {/* Responsive padding */}
+                <div>
+                  <label htmlFor="signup-name" className="block text-sm font-medium text-slate-300 mb-2">
                   Full Name
                 </label>
                 <div className="relative">
@@ -272,18 +276,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTab = 'si
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full py-2 px-4 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-colors"
-              >
-                Create Account
-              </button>
-            </form>
-          )}
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-colors" /* Adjusted padding for consistency */
+                >
+                  Create Account
+                </button>
+              </form>
+            )}
+          </div> {/* End of scrollable form content div */}
         </div>
       </div>
     </>
   );
 };
 
-export default AuthModal; 
+export default AuthModal;

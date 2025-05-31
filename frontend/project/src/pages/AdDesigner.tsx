@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, Play, Menu, X, Plus } from 'lucide-react';
-import Sidebar from '../components/Sidebar';
+import { Send, Paperclip, Play, Plus, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react'; // Added Chevron icons and Eye/EyeOff
 
 interface Message {
   id: string;
@@ -153,6 +152,7 @@ const AdDesigner: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [canGenerate, setCanGenerate] = useState(false);
   const [isAIGenerating, setIsAIGenerating] = useState(false);
+  const [isBlueprintPanelVisibleMobile, setIsBlueprintPanelVisibleMobile] = useState(false); // State for mobile blueprint visibility
   const [blueprint, setBlueprint] = useState<AdBlueprint>({
     title: 'Untitled Ad',
     product: '',
@@ -164,7 +164,7 @@ const AdDesigner: React.FC = () => {
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed: Main sidebar is handled by App.tsx
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -284,17 +284,12 @@ const AdDesigner: React.FC = () => {
   return (
     <div className="h-screen flex flex-col bg-[#20243B]">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-[#242842] border-b border-slate-700/50 sticky top-0 z-30 md:static md:z-10">
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2 rounded-lg hover:bg-slate-700/40 focus:outline-none focus:ring-2 focus:ring-violet-500"
-          aria-label="Open menu"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <Menu className="h-7 w-7 text-white" />
-        </button>
-        <div className="flex items-center space-x-4 flex-1 md:justify-start">
-          <span className="text-slate-300 text-base md:text-lg">Project Title:</span>
+      {/* The main app sidebar's hamburger button is now in App.tsx's ProtectedRoute */}
+      {/* This header is now only for AdDesigner specific controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 p-2 sm:p-4 bg-[#242842] border-b border-slate-700/50 sticky top-0 z-30 md:static md:z-10"> {/* Adjusted gap and padding */}
+        {/* Project Title Section */}
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0"> 
+          <span className="text-slate-300 text-sm sm:text-base md:text-lg flex-shrink-0">Project Title:</span> {/* Responsive text size for label */}
           <input
             type="text"
             value={blueprint.title}
@@ -304,11 +299,12 @@ const AdDesigner: React.FC = () => {
             style={{ fontSize: '16px' }}
           />
         </div>
-        <div className="flex space-x-2 ml-4">
+        {/* Generate and New Product buttons Section */}
+        <div className="flex flex-col xs:flex-row space-y-2 xs:space-y-0 xs:space-x-2 w-full sm:w-auto items-end xs:items-center sm:justify-normal"> {/* Stack buttons vertically on tiniest screens, align right. Row from xs up. */}
           <button
             onClick={handleGenerateClick}
             disabled={!canGenerate}
-            className="px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] md:text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
+            className="p-2.5 xs:px-6 xs:py-3 rounded-lg flex items-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] md:text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
               bg-violet-600 hover:bg-violet-700 text-white disabled:bg-slate-700/50 disabled:text-slate-400 disabled:cursor-not-allowed"
             title={canGenerate && !blueprint.targetAudience ? "Generate draft using AI-suggested content" : undefined}
           >
@@ -316,7 +312,7 @@ const AdDesigner: React.FC = () => {
             <span className="hidden xs:inline">Generate Video</span>
           </button>
           <button
-            className="px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] md:text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
+            className="p-2.5 xs:px-6 xs:py-3 rounded-lg flex items-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] md:text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
               bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
             onClick={() => setBlueprint({ ...blueprint, product: '', title: 'Untitled Ad', targetAudience: '', adTone: '', assets: [], scenes: [] })}
           >
@@ -326,52 +322,12 @@ const AdDesigner: React.FC = () => {
         </div>
       </div>
 
-      {/* Sidebar Drawer for Mobile */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
-          {/* Drawer */}
-          <div className="relative w-64 max-w-full h-full bg-[#242842] shadow-2xl border-r border-slate-700/50 animate-slide-in-left">
-            <button
-              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-slate-700/40 focus:outline-none focus:ring-2 focus:ring-violet-500"
-              aria-label="Close menu"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <X className="h-6 w-6 text-white" />
-            </button>
-            <Sidebar credits={25} userName="John Doe" />
-          </div>
-        </div>
-      )}
+      {/* Removed Sidebar Drawer for Mobile - Handled by App.tsx */}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 w-full max-w-full px-4 md:px-0" style={{paddingTop: 0}}>
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 w-full max-w-full" style={{paddingTop: 0}}> {/* Removed px-4 md:px-0 to allow full-width children */}
         {/* Chat and Video Generation (Single column on mobile) */}
-        <div className="w-full md:w-[65%] flex flex-col bg-[#20243B] h-full min-h-0 max-w-full" id="chat-panel">
-          {/* Video Generation Interface (above chat) */}
-          <div className="block md:hidden py-4">
-            <div className="flex flex-col space-y-4">
-              <button
-                onClick={handleGenerateClick}
-                disabled={!canGenerate}
-                className="w-full px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
-                  bg-violet-600 hover:bg-violet-700 text-white disabled:bg-slate-700/50 disabled:text-slate-400 disabled:cursor-not-allowed"
-                title={canGenerate && !blueprint.targetAudience ? "Generate draft using AI-suggested content" : undefined}
-              >
-                <Play className="h-5 w-5" />
-                <span>Generate Video</span>
-              </button>
-              <button
-                className="w-full px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500
-                  bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
-                onClick={() => setBlueprint({ ...blueprint, product: '', title: 'Untitled Ad', targetAudience: '', adTone: '', assets: [], scenes: [] })}
-              >
-                <Plus className="h-5 w-5" />
-                <span>New Product</span>
-              </button>
-            </div>
-          </div>
+        <div className="w-full md:w-[65%] flex flex-col bg-[#20243B] h-full min-h-0 max-w-full px-4 md:px-0" id="chat-panel"> {/* Added px-4 md:px-0 here */}
           {/* Chat History (scrollable) */}
           <div 
             ref={chatContainerRef}
@@ -407,7 +363,7 @@ const AdDesigner: React.FC = () => {
             ))}
           </div>
           {/* Chat Input */}
-          <form onSubmit={handleSendMessage} className="p-4 bg-[#2C3254] border-t border-slate-700/50 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2" style={{ fontSize: '16px' }}>
+          <form onSubmit={handleSendMessage} className="p-2 sm:p-4 bg-[#2C3254] border-t border-slate-700/50 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2" style={{ fontSize: '16px' }}> {/* Adjusted padding */}
             <div className="flex w-full space-x-2">
               <input
                 type="file"
@@ -440,8 +396,26 @@ const AdDesigner: React.FC = () => {
             </div>
           </form>
         </div>
-        {/* Blueprint Panel (hidden on mobile) */}
-        <div className="hidden md:block w-[35%] bg-[#242842] p-6 overflow-y-auto border-l border-slate-700/50 h-full min-h-0">
+
+        {/* Mobile Toggle for Blueprint Panel */}
+        <div className="p-4 border-t border-slate-700/50 md:hidden bg-[#20243B]">
+          <button
+            onClick={() => setIsBlueprintPanelVisibleMobile(prev => !prev)}
+            className="w-full flex items-center justify-between p-3 rounded-lg text-slate-200 hover:bg-slate-700/30 transition-colors"
+          >
+            <span className="font-medium">Ad Blueprint</span>
+            {isBlueprintPanelVisibleMobile ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {/* Blueprint Panel */}
+        <div className={` 
+          w-full md:w-[35%] bg-[#242842] p-6 overflow-y-auto 
+          border-slate-700/50 min-h-0
+          ${isBlueprintPanelVisibleMobile ? 'block' : 'hidden'} md:block 
+          md:border-l md:h-full 
+        `}>
+          {/* Added h-full for desktop consistency, though overflow-y-auto should handle height */}
           <h2 className="text-xl font-semibold text-white mb-6">Ad Blueprint</h2>
           
           <div className="space-y-6">
