@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, Play } from 'lucide-react';
+import { Send, Paperclip, Play, Menu, X, Plus } from 'lucide-react';
+import Sidebar from '../components/Sidebar';
 
 interface Message {
   id: string;
@@ -163,6 +164,7 @@ const AdDesigner: React.FC = () => {
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -280,41 +282,101 @@ const AdDesigner: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-[#20243B]">
       {/* Header */}
-      <div className="bg-[#242842] border-b border-slate-700/50 p-4 flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <span className="text-slate-300">Project Title:</span>
+      <div className="flex items-center justify-between p-4 bg-[#242842] border-b border-slate-700/50 sticky top-0 z-30 md:static md:z-10">
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden p-2 rounded-lg hover:bg-slate-700/40 focus:outline-none focus:ring-2 focus:ring-violet-500"
+          aria-label="Open menu"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className="h-7 w-7 text-white" />
+        </button>
+        <div className="flex items-center space-x-4 flex-1 md:justify-start">
+          <span className="text-slate-300 text-base md:text-lg">Project Title:</span>
           <input
             type="text"
             value={blueprint.title}
             onChange={(e) => setBlueprint({...blueprint, title: e.target.value})}
-            className="bg-transparent text-white text-lg font-semibold focus:outline-none focus:border-b-2 focus:border-violet-400"
+            className="bg-transparent text-white text-lg font-semibold focus:outline-none focus:border-b-2 focus:border-violet-400 min-w-0 flex-1"
             placeholder="Untitled Ad"
+            style={{ fontSize: '16px' }}
           />
         </div>
-        <button
-          onClick={handleGenerateClick}
-          disabled={!canGenerate}
-          className={`px-6 py-2 rounded-lg flex items-center space-x-2 transition-colors ${
-            canGenerate
-              ? 'bg-violet-600 hover:bg-violet-700 text-white'
-              : 'bg-slate-700/50 text-slate-400 cursor-not-allowed'
-          }`}
-          title={canGenerate && !blueprint.targetAudience ? "Generate draft using AI-suggested content" : undefined}
-        >
-          <Play className="h-5 w-5" />
-          <span>Generate Video</span>
-        </button>
+        <div className="flex space-x-2 ml-4">
+          <button
+            onClick={handleGenerateClick}
+            disabled={!canGenerate}
+            className="px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] md:text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
+              bg-violet-600 hover:bg-violet-700 text-white disabled:bg-slate-700/50 disabled:text-slate-400 disabled:cursor-not-allowed"
+            title={canGenerate && !blueprint.targetAudience ? "Generate draft using AI-suggested content" : undefined}
+          >
+            <Play className="h-5 w-5" />
+            <span className="hidden xs:inline">Generate Video</span>
+          </button>
+          <button
+            className="px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] md:text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
+              bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+            onClick={() => setBlueprint({ ...blueprint, product: '', title: 'Untitled Ad', targetAudience: '', adTone: '', assets: [], scenes: [] })}
+          >
+            <Plus className="h-5 w-5" />
+            <span className="hidden xs:inline">New Product</span>
+          </button>
+        </div>
       </div>
 
+      {/* Sidebar Drawer for Mobile */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
+          {/* Drawer */}
+          <div className="relative w-64 max-w-full h-full bg-[#242842] shadow-2xl border-r border-slate-700/50 animate-slide-in-left">
+            <button
+              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-slate-700/40 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              aria-label="Close menu"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <X className="h-6 w-6 text-white" />
+            </button>
+            <Sidebar credits={25} userName="John Doe" />
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
-        {/* Chat Interface */}
-        <div className="w-[65%] flex flex-col bg-[#20243B] h-full min-h-0">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 w-full max-w-full px-4 md:px-0" style={{paddingTop: 0}}>
+        {/* Chat and Video Generation (Single column on mobile) */}
+        <div className="w-full md:w-[65%] flex flex-col bg-[#20243B] h-full min-h-0 max-w-full" id="chat-panel">
+          {/* Video Generation Interface (above chat) */}
+          <div className="block md:hidden py-4">
+            <div className="flex flex-col space-y-4">
+              <button
+                onClick={handleGenerateClick}
+                disabled={!canGenerate}
+                className="w-full px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-violet-500
+                  bg-violet-600 hover:bg-violet-700 text-white disabled:bg-slate-700/50 disabled:text-slate-400 disabled:cursor-not-allowed"
+                title={canGenerate && !blueprint.targetAudience ? "Generate draft using AI-suggested content" : undefined}
+              >
+                <Play className="h-5 w-5" />
+                <span>Generate Video</span>
+              </button>
+              <button
+                className="w-full px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors text-base min-w-[44px] min-h-[44px] font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500
+                  bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+                onClick={() => setBlueprint({ ...blueprint, product: '', title: 'Untitled Ad', targetAudience: '', adTone: '', assets: [], scenes: [] })}
+              >
+                <Plus className="h-5 w-5" />
+                <span>New Product</span>
+              </button>
+            </div>
+          </div>
+          {/* Chat History (scrollable) */}
           <div 
             ref={chatContainerRef}
-            className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6"
+            className="flex-1 min-h-0 overflow-y-auto p-4 space-y-6 md:p-6"
+            style={{ fontSize: '16px' }}
           >
             {messages.map(message => (
               <div
@@ -322,11 +384,12 @@ const AdDesigner: React.FC = () => {
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[70%] rounded-xl p-4 ${
+                  className={`max-w-[90%] md:max-w-[70%] rounded-xl p-4 ${
                     message.sender === 'user'
                       ? 'bg-violet-600 text-white'
                       : 'bg-[#2C3254] text-slate-200'
                   }`}
+                  style={{ fontSize: '16px' }}
                 >
                   {message.type === 'asset' ? (
                     <div className="flex items-center space-x-2">
@@ -343,9 +406,9 @@ const AdDesigner: React.FC = () => {
               </div>
             ))}
           </div>
-          
-          <form onSubmit={handleSendMessage} className="p-4 bg-[#2C3254] border-t border-slate-700/50">
-            <div className="flex space-x-2">
+          {/* Chat Input */}
+          <form onSubmit={handleSendMessage} className="p-4 bg-[#2C3254] border-t border-slate-700/50 flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2" style={{ fontSize: '16px' }}>
+            <div className="flex w-full space-x-2">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -356,7 +419,7 @@ const AdDesigner: React.FC = () => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="p-2 text-slate-400 hover:text-violet-400 transition-colors"
+                className="p-2 text-slate-400 hover:text-violet-400 transition-colors min-w-[44px] min-h-[44px] rounded-lg"
               >
                 <Paperclip className="h-5 w-5" />
               </button>
@@ -365,20 +428,20 @@ const AdDesigner: React.FC = () => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="Type your message to the AI Agent..."
-                className="flex-1 bg-[#3A3F64] text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="flex-1 bg-[#3A3F64] text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 min-w-0"
+                style={{ fontSize: '16px' }}
               />
               <button
                 type="submit"
-                className="bg-violet-600 text-white rounded-lg px-4 py-2 hover:bg-violet-700 transition-colors"
+                className="bg-violet-600 text-white rounded-lg px-4 py-2 hover:bg-violet-700 transition-colors min-w-[44px] min-h-[44px]"
               >
                 <Send className="h-5 w-5" />
               </button>
             </div>
           </form>
         </div>
-
-        {/* Blueprint Panel */}
-        <div className="w-[35%] bg-[#242842] p-6 overflow-y-auto border-l border-slate-700/50 h-full min-h-0">
+        {/* Blueprint Panel (hidden on mobile) */}
+        <div className="hidden md:block w-[35%] bg-[#242842] p-6 overflow-y-auto border-l border-slate-700/50 h-full min-h-0">
           <h2 className="text-xl font-semibold text-white mb-6">Ad Blueprint</h2>
           
           <div className="space-y-6">
